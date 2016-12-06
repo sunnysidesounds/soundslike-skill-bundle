@@ -48,15 +48,5 @@ To run this skill you need to do two things. The first is to deploy this skill's
 9. In order to test it, try to say some of the Sample Utterances from the Examples section below.
 10. Your skill is now saved and once you are finished testing you can continue to publish your skill.
 
-
-
-## Disclaimer : 
-This skill isn't appropriate for children and can be offensive to some people. This is just a joke and this skill will 
-probably never ever get approved in their skill store. 
- 
- 
- 
- 
- 
  
 
