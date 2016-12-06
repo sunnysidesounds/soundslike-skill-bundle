@@ -1,0 +1,29 @@
+OpenFullPhraseIntent open sounds like and play a {Sound} sound
+OpenFullPhraseIntent get sounds like and play a {Sound} sound
+OpenFullPhraseIntent open sounds like {Sound}
+OpenFullPhraseIntent get sounds like {Sound}
+
+PlaySoundIntent play me a sounds of a {Sound}
+PlaySoundIntent play a sounds of a {Sound}
+PlaySoundIntent play me the sound of a {Sound}
+PlaySoundIntent play the sound of a {Sound}
+PlaySoundIntent play sound of a {Sound}
+PlaySoundIntent play sound {Sound}
+PlaySoundIntent play {Sound}
+PlaySoundIntent sound of a {Sound}
+
+PlayMoreSoundYesIntent yes
+
+PlayMoreSoundNoIntent no
+
+AMAZON.StopIntent stop
+AMAZON.StopIntent please stop
+AMAZON.StopIntent stop please
+
+AMAZON.HelpIntent help
+AMAZON.HelpIntent help please
+AMAZON.HelpIntent please help
+
+AMAZON.CancelIntent cancel
+AMAZON.CancelIntent cancel please
+AMAZON.CancelIntent please cancel

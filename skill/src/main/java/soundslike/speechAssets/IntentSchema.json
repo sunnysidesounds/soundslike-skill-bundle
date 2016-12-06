@@ -1,0 +1,43 @@
+{
+    "intents": [
+        {
+            "intent": "OpenFullPhraseIntent",
+            "slots": [
+                {
+                    "name": "Sound",
+                    "type": "LIST_OF_SOUNDS"
+                }
+            ]
+        },
+        {
+            "intent": "PlaySoundIntent",
+            "slots": [
+                {
+                    "name": "Sound",
+                    "type": "LIST_OF_SOUNDS"
+                }
+            ]
+        },
+        {
+          "intent": "PlayMoreSoundYesIntent",
+          "slots": [
+            {
+              "name": "Sound",
+              "type": "LIST_OF_SOUNDS"
+            }
+          ]
+        },
+        {
+            "intent": "PlayMoreSoundNoIntent"
+        },
+        {
+            "intent": "AMAZON.HelpIntent"
+        },
+        {
+            "intent": "AMAZON.StopIntent"
+        },
+        {
+            "intent": "AMAZON.CancelIntent"
+        }
+    ]
+}

@@ -1,0 +1,185 @@
+/*
+ * Copyright 2014 Sonoport (Asia) Pte Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.sonoport.freesound.query;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import com.sonoport.freesound.response.PagingResponse;
+import com.sonoport.freesound.response.mapping.PagingResponseMapper;
+
+/**
+ * Extension of {@link JSONResponseQuery} that represents API calls that can return results that span multiple pages.
+ * The main example of this are search queries, where there may be too many results to return in one go. Results are
+ * returned as an instance of {@link PagingResponse} which contains the common elements relating to the paging, plus a
+ * list of the current page of results.
+ *
+ * @param <Q> The type of the {@link PagingQuery} (required to implement Fluent API elements)
+ * @param <I> The DTO type of the items in the list
+ */
+public abstract class PagingQuery<Q extends PagingQuery<Q, I>, I extends Object>
+			extends JSONResponseQuery<List<I>> {
+
+	/** The default page size if none is specified. */
+	public static final int DEFAULT_PAGE_SIZE = 15;
+
+	/** The maximum size of a single page. 150 is the specified maximum in the API documentation. */
+	public static final int MAXIMUM_PAGE_SIZE = 150;
+
+	/** The page that will be requested in the query. */
+	private int page;
+
+	/** The number of results to return per page. */
+	private int pageSize;
+
+	/**
+	 * @param httpRequestMethod HTTP method to use for query
+	 * @param path The URI path to the API endpoint
+	 * @param resultsMapper {@link PagingResponseMapper} to convert results
+	 */
+	protected PagingQuery(
+			final HTTPRequestMethod httpRequestMethod, final String path, final PagingResponseMapper<I> resultsMapper) {
+		this(httpRequestMethod, path, resultsMapper, DEFAULT_PAGE_SIZE);
+	}
+
+	/**
+	 * @param httpRequestMethod HTTP method to use for query
+	 * @param path The URI path to the API endpoint
+	 * @param resultsMapper {@link PagingResponseMapper} to convert results
+	 * @param pageSize The number of results per page
+	 */
+	protected PagingQuery(
+			final HTTPRequestMethod httpRequestMethod,
+			final String path,
+			final PagingResponseMapper<I> resultsMapper,
+			final int pageSize) {
+		this(httpRequestMethod, path, resultsMapper, pageSize, 1);
+	}
+
+	/**
+	 * @param httpRequestMethod HTTP method to use for query
+	 * @param path The URI path to the API endpoint
+	 * @param resultsMapper {@link PagingResponseMapper} to convert results
+	 * @param pageSize The number of results per page
+	 * @param startPage The page to start at
+	 */
+	protected PagingQuery(
+			final HTTPRequestMethod httpRequestMethod,
+			final String path,
+			final PagingResponseMapper<I> resultsMapper,
+			final int pageSize,
+			final int startPage) {
+		super(httpRequestMethod, path, resultsMapper);
+		setPageSize(pageSize);
+		setPage(startPage);
+	}
+
+	@Override
+	public PagingResponse<I> processResponse(
+			final int httpResponseCode, final String httpResponseStatusString, final JSONObject freesoundResponse) {
+		final PagingResponse<I> response = new PagingResponse<>(httpResponseCode, httpResponseStatusString);
+
+		if (response.isErrorResponse()) {
+			response.setErrorDetails(extractErrorMessage(freesoundResponse));
+		} else {
+			final PagingResponseMapper<I> resultsMapper = (PagingResponseMapper<I>) getResultsMapper();
+
+			response.setCount(resultsMapper.extractCount(freesoundResponse));
+			response.setNextPageURI(resultsMapper.extractNextPageURI(freesoundResponse));
+			response.setPreviousPageURI(resultsMapper.extractPreviousPageURI(freesoundResponse));
+
+			response.setResults(resultsMapper.map(freesoundResponse));
+		}
+
+		return response;
+	}
+
+	/**
+	 * Set the page of results to retrieve in the query, using a Fluent API style.
+	 *
+	 * @param pageNumber The page number to retrieve
+	 * @return The current query
+	 */
+	@SuppressWarnings("unchecked")
+	public Q page(final int pageNumber) {
+		setPage(pageNumber);
+		return (Q) this;
+	}
+
+	/**
+	 * Set the number of results to return per page, using a Fluent API style.
+	 *
+	 * @param pageSize The number of results per page
+	 * @return The current query
+	 */
+	@SuppressWarnings("unchecked")
+	public Q pageSize(final int pageSize) {
+		setPageSize(pageSize);
+		return (Q) this;
+	}
+
+	@Override
+	public Map<String, Object> getQueryParameters() {
+		final Map<String, Object> queryParams = new HashMap<>();
+		queryParams.put("page", Integer.valueOf(page));
+		queryParams.put("page_size", Integer.valueOf(pageSize));
+
+		return queryParams;
+	}
+
+	/**
+	 * @return the page
+	 */
+	public int getPage() {
+		return page;
+	}
+
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(final int page) {
+		if (page < 1) {
+			throw new IllegalArgumentException("Must specifiy a page number greater than 0");
+		}
+
+		this.page = page;
+	}
+
+	/**
+	 * @return the pageSize
+	 */
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(final int pageSize) {
+		if (pageSize < 1) {
+			throw new IllegalArgumentException("Must specifiy a page size greater than 0");
+		} else if (pageSize > MAXIMUM_PAGE_SIZE) {
+			throw new IllegalArgumentException(
+					String.format("Cannot specify a page size greater than %s", MAXIMUM_PAGE_SIZE));
+		}
+
+		this.pageSize = pageSize;
+	}
+
+}

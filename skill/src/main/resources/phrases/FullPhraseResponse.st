@@ -1,0 +1,1 @@
+Ok, here is a sounds of a $audioname$ <audio src='$audiolink$' /> . Would you like to play another sound?
