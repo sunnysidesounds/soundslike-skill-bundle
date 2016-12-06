@@ -5,13 +5,13 @@
 This Alexa skill connects to the FreeSounds.org API and retrieve and plays sounds that you ask Alexa. 
 
 ## Usage 
-**You** : *"Alexa, open Screw You!"* 
+**You** : *"User : Alexa, open Sounds Like.!"* 
 
-**Alexa** : *"You are piece of sh@t"*
+**Alexa** : *"Ok, what sound would you like me to play for you?"*
 
-**You** : *"Piss Off!"*
+**You** : *"open Sounds Like and play a cat sound!"*
  
-**Alexa** : *"Go f@ck yourself"*
+**Alexa** : *"Ok, here is a sounds of a cat PLAYAUDIOFILE . Would you like to play another sound?"*
 
 
 
